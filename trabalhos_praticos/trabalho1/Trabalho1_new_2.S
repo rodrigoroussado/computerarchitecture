@@ -1,11 +1,17 @@
 ;DEFINES
 .equ STACK_SIZE 64
+
 .equ RED_SCALE 2
+.equ AMBAR_SCALE 1
+.equ GREEN_SCALE 0
+
+.equ WARNING_TIME, 300
+.equ CRITICAL_TIME, 150
 
 
 .section startup
 
-ldr sp, stack_top_addr ; iniciar o sttack
+ldr sp, stack_top_addr ; iniciar o stack
 mov r0, pc             ; bl indireto 
 add lr, r0, #4         ; + 4 para chegar ao b .
 ldr pc, main_addr      ; porque a main nao esta nesta secção
@@ -15,6 +21,7 @@ stack_top_addr:
 main_addr:
 .word main
 
+
 .text
 
 color_scale:
@@ -23,8 +30,11 @@ color_scale:
     mov r1, #GREEN_SCALE & 0xff
     movt r1, #(GREEN_SCALE >> 8) & 0xff
 
-    ldr r2, critical_time_addr
-    ldr r3, warning_time_addr
+    mov r2, #CRITICAL_TIME & 0xff
+    movt r2, #(CRITICAL_TIME >> 8) & 0xff
+
+    mov r3, #WARNING_TIME & 0xff
+    movt r3, #(WARNING_TIME >> 8) & 0xff
 
 if:
     cmp r0, r2
@@ -33,7 +43,7 @@ if:
     cmp r3,r0
     blo if_end
 
-    ldr r1, ambar_scale_addr    ; ação que está dentro do if
+    mov r1, AMBAR_SCALE    ; ação que está dentro do if
 
 if_end:
 
@@ -42,7 +52,7 @@ else_if:
     cmp r0, r2
     bhs else_if_end
 
-    ldr r1, red_scale_addr
+    mov r1, RED_SCALE
 
 else_if_end:
 
@@ -58,21 +68,24 @@ test_color_scale:
     push r6
     push r7
 
-for:
     mov r4, #0
+for:
     cmp r4, r5
     bhs for_end
+
 ;array_c[color_scale(array_t[i])]++
-    ldr r0, [r6, r4]
-    bl color_scale
-    ldrb r1, [r7, r0]
-    add r1, r1, #1
-    strb r1, [r7, r0] 
+    ldr r0, [r6, r4]    ; r0 <- array_t[i]
+    bl color_scale      ; entra na função com argumento em r0 e devolve em r0  
+
+    ldrb r1, [r7, r0]   ; r1 <- array_c[color_scale(array_t[i])]
+    add r1, r1, #1      ; array_c[color_scale(array_t[i])]++
+    strb r1, [r7, r0]   ; guarda na memória o valor incrementado
 
 for_cond:
     add r4, r4, #1 ; i++
     b for
 for_end:
+
     pop r7
     pop r6
     pop r5
@@ -89,10 +102,12 @@ main:
 while_cond:
     cmp r0,r1   ; comparação unsigned
     bhs while_end
+
+    ;CONFIRMAR TUDO ABAIXO DISTO!!!
     ; color_histograms[i++] = 0 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    lsl r0, r0, #1
+    lsl r0, r0, #1  ;porquê lsl? não precisamos de andar de 2 em 2
     ldr r1, color_histograms_addr
-    ldr r2, [r1, r0]
+    ldr r2, [r1, r0]    ; r2 <- color_histograms[i]
     add r2, r2, #1
     str r2, [r1, r0]
     mov r2, #0
@@ -108,35 +123,6 @@ while_end:
 
 ;defines
 ;PUXAR OS ADDR PARA O .TEXT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-red_scale_addr:
-    .word   RED_SCALE
-
-RED_SCALE:
-    .byte  2
-
-ambar_scale_addr:
-    .word   AMBAR_SCALE
-    
-AMBAR_SCALE:
-    .byte   1
-
-green_scale_addr:
-    .word   GREEN_SCALE
-
-GREEN_SCALE:
-    .byte  0
-
-warning_time_addr:
-    .word   WARNING_TIME
-    
-WARNING_TIME:
-    .byte   300
-
-critical_time_addr:
-    .word   CRITICAL_TIME
-
-CRITICAL_TIME:
-    .byte   150
 
 ;array
 times_addr:
@@ -145,6 +131,7 @@ times_addr:
 times:
     .word   65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
 
+
 color_histograms_addr:
     .word color_histograms
 
@@ -152,7 +139,7 @@ color_histograms_addr:
 color_histograms:
     .space 3
 
+
 .stack
 .space STACK_SIZE
 stack_top:
-    
