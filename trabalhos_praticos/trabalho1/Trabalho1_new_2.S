@@ -82,7 +82,7 @@ for:
     strb r1, [r7, r0]   ; guarda na memória o valor incrementado
 
 for_cond:
-    add r4, r4, #1 ; i++
+    add r4, r4, #2 ; i++ (de word em word)
     b for
 for_end:
 
@@ -116,8 +116,24 @@ while_cond:
 while_end:
 
     push lr
+    push r5
+    push r6
+    push r7
+
+    mov r5,#20
+    ldr r6,times_addr
+    ldr r7,color_histograms_addr
+
     bl test_color_scale
+
+    pop r7
+    pop r6
+    pop r5
+    pop pc
+
     mov r0,#0       ; return 0 
+
+
 
 times_addr:
     .word   times
