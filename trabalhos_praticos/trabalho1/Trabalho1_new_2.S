@@ -103,42 +103,33 @@ while_cond:
     cmp r0,r1   ; comparação unsigned
     bhs while_end
 
-    ;CONFIRMAR TUDO ABAIXO DISTO!!!
-    ; color_histograms[i++] = 0 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    lsl r0, r0, #1  ;porquê lsl? não precisamos de andar de 2 em 2
+    ; color_histograms[i++] = 0 
+    
     ldr r1, color_histograms_addr
-    ldr r2, [r1, r0]    ; r2 <- color_histograms[i]
-    add r2, r2, #1
+    mov r2,#0
     str r2, [r1, r0]
-    mov r2, #0
+    add r0, r0, #1
 
 while_end:
-    ; b test_color_scale
+
+    push lr
     bl test_color_scale
+    mov r0,#0       ; return 0 
 
-    mov r0,#0   
-
-
-.data
-
-;defines
-;PUXAR OS ADDR PARA O .TEXT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-;array
 times_addr:
     .word   times
-
-times:
-    .word   65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
-
 
 color_histograms_addr:
     .word color_histograms
 
 
+.data
+
 color_histograms:
     .space 3
 
+times:
+    .word   65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
 
 .stack
 .space STACK_SIZE
