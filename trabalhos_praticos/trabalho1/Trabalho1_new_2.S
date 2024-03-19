@@ -1,9 +1,9 @@
 ;DEFINES
-.equ STACK_SIZE 64
+.equ STACK_SIZE, 64
 
-.equ RED_SCALE 2
-.equ AMBAR_SCALE 1
-.equ GREEN_SCALE 0
+.equ RED_SCALE, 2
+.equ AMBAR_SCALE, 1
+.equ GREEN_SCALE, 0
 
 .equ WARNING_TIME, 300
 .equ CRITICAL_TIME, 150
@@ -43,7 +43,7 @@ if:
     cmp r3,r0
     blo if_end
 
-    mov r1, AMBAR_SCALE    ; ação que está dentro do if
+    mov r1, #AMBAR_SCALE    ; ação que está dentro do if
 
 if_end:
 
@@ -52,7 +52,7 @@ else_if:
     cmp r0, r2
     bhs else_if_end
 
-    mov r1, RED_SCALE
+    mov r1, #RED_SCALE
 
 else_if_end:
 
@@ -97,9 +97,10 @@ main:
     push lr
 
     mov r0, #0
-    mov r1, #3  ; para o compare
 
 while_cond:
+
+    mov r1, #3  ; para o compare
     cmp r0,r1   ; comparação unsigned
     bhs while_end
 
@@ -109,6 +110,8 @@ while_cond:
     mov r2,#0
     str r2, [r1, r0]
     add r0, r0, #1
+
+    b while_cond
 
 while_end:
 
@@ -125,11 +128,11 @@ color_histograms_addr:
 
 .data
 
-color_histograms:
-    .space 3
-
 times:
     .word   65535, 500, 301, 300, 299, 151, 150, 149, 1, 0
+
+color_histograms:
+    .space 3
 
 .stack
 .space STACK_SIZE
