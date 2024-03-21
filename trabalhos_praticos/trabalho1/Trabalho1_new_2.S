@@ -4,7 +4,8 @@
 ; estes são de 0 bytes. Por outro lado, se os símbolos tivessem sido definidos na diretiva ".data", poderiam ocupar espaço na memória,
 ; dependendo este de como fossem indicados (byte ou word).
 
-; 3.b) 
+; 3.b) Para a implementação do codigo da função color_scale foram ocupados 2*n bytes, sendo n o número de intruções utilizadas, logo
+; nesta função (color_scale) foram ocupados 2*16 = 32 bytes.
 
 ; 4.a) A rotina test_color_scale não é uma rotina folha, ou seja, invoca outras rotinas (neste caso, a rotina color_scale). Devido às
 ; convenções de programação para os registos, uma rotina não precisa de preservar os valores de R0..R3. Assim, se usássemos R3 para
