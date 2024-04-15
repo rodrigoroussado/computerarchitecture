@@ -1,0 +1,19 @@
+AC - TRABALHO PRÁTICO 2
+
+3.1
+1. A afirmação é falsa. Devido ao facto da microarquitetura apresentar Instruction Memory e Data Memory separadas, assim como pelo facto de não existir nesta um Instruction Register, podemos afirmar que esta é do tipo Harvard.
+
+2. O módulo Ext tem como funcionalidade a extensão de um valor constante (neste caso, um valor imediato codificado a 4 bits) para que este fique com 8 bits, de forma a poder ser usado na ALU para aí executar operações. Este é especificamente utilizado na instrução ldr rd,[#imm4].
+
+3. A instrução b rn recolhe o endereço de memória para onde vai ser efectuado o salto através do registo denominado por rn. Neste caso, os registos são de 8 bits, o que quer dizer que este valor pode ser codificado neste número de bits. Isto faz com que o código fique mais denso (visto o valor ter de ser carregado para um registo), mas também que não seja necessário definir este endereço através de uma constante (visto poder estar num registo de forma a ser incrementado, decrementado, etc.). Por oposição, temos o endereçamento da instrução bzc #imm7 em que o endereço para onde vai ocorrer o salto é definido através de um imediato codificado a 7 bits (limitando, em metade, os valores quando comparado com o endereçamento antes referido). Desta forma, o código fica menos denso, visto que o valor é diretamente inserido pelo programador mas, por outro lado, torna-se mais difícil definir este valor e realizar operações com o mesmo, o que dificulta a implementação de rotinas que deste mecanismo dependam.
+
+
+3.2
+3. Na utilização de código uniforme de comprimento fixo, uma vantagem é a maior rapidez no decode das instruções visto que não é necessário verificar o tipo de instrução para saber o comprimento desta. Por outro lado, uma desvantagem deste é a limitação de endereçamento de algumas instruções em que o número de bits para este fim fica reduzido, por oposição ao código de comprimento variável em que basta dedicar a estas instruções um maior número de bits.
+
+
+3.3
+2. Para implementar o bloco Instruction Decoder é necessário uma ROM em que as entradas de endereço são os bits que compõem os sinais de opcode e da flag Z, de forma a poder ter na saída de dados as informações de controlo da microarquitetura em função da instrução que se pretende executar. Assim, na saída de dados temos de ter todos os sinais de controlo.
+A única opção que contempla todas estas características é a montagem 1 pelo que seria essa a escolhida.
+
+3. A capacidade, em bits, da memória ROM considerada é de 2^4*10 = 160 bits. Isto deve-se ao facto de sere, necessários 4 bits de endereço e cada valor armazenado na memória (que vão estar na saída quando dado um endereço na entrada) ter 10 bits.
